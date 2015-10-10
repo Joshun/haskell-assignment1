@@ -13,6 +13,17 @@ module Bags where
   listToBag [] = []
   listToBag (first:rest) = (first,1):listToBag rest
 
+  listToBagCleanup :: Bag Int -> Bag Int
+  listToBagCleanup [] = []
+  listToBagCleanup bag = listToBagCleanupA bag []
+
+  -- takes a bag to clean up, a working bag and returns a new bag
+  listToBagCleanupA :: Bag Int -> Bag Int -> Bag Int
+  listToBagCleanupA bag workingBag
+    | null rest = bagInsert nextItemType workingBag
+    | otherwise = listToBagCleanupA rest (bagInsert nextItemType workingBag)
+    where ((nextItemType,nextItemCount):rest) = bag
+
   itemCount :: ItemType -> Bag Int -> Int
   itemCount itemType bag
     | null rest = if itemType == nextItemType then nextItemCount else 0
@@ -21,6 +32,7 @@ module Bags where
     where ((nextItemType,nextItemCount):rest) = bag
 
   bagInsert :: ItemType -> Bag Int-> Bag Int
+  bagInsert itemType [] = (itemType,1):[]
   bagInsert itemType bag
     -- if item doesn't exist, create new pair which counts 1 item of the type
     | null remainingBag = if itemType == nextItemType then (nextItemType,nextItemCount+1):[] else (nextItemType,nextItemCount):(itemType,1):[]
