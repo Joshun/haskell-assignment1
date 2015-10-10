@@ -46,7 +46,10 @@ module Bags where
   bagInsert itemType [] = (itemType,1):[]
   bagInsert itemType bag
     -- if item doesn't exist, create new pair which counts 1 item of the type
-    | null remainingBag = if itemType == currentItemType then (currentItemType,currentItemQuantity+1):[] else (currentItemType,currentItemQuantity):(itemType,1):[]
+    | null remainingBag =
+        if itemType == currentItemType
+          then (currentItemType,currentItemQuantity+1):[]
+        else (currentItemType,currentItemQuantity):(itemType,1):[]
     -- if item is already in list, create tuple with item type and count increased by 1 and cons it
     | itemType == currentItemType = (currentItemType,currentItemQuantity+1):(remainingBag)
     -- else keep going through bag seeing if item already exists
