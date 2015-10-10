@@ -63,9 +63,10 @@ module Bags where
   bagEqual bag1 bag2 = bagEqualA (sort bag1) (sort bag2)
 
   bagEqualA :: Bag Int -> Bag Int -> Bool
+  bagEqualA [] [] = True
+  bagEqualA _ [] = False
+  bagEqualA [] _ = False
+
   bagEqualA (h1:t1) (h2:t2)
-    -- tails are null, so see if last elements are equal
-    | null t1 && null t2 = h1 == h2
-    -- heads are equal, so see if rest of bag is
     | h1 == h2 = bagEqualA t1 t2
     | otherwise = False
