@@ -9,6 +9,7 @@ module Bags where
   -- data Item = (a,Int) deriving Eq (Eq,Int)
   type Bag a = [Item a]
 
+  -- takes a list of items in sequence and puts them into a list of tuples in sequence
   listToBag :: [ItemType] -> Bag Int
   listToBag itemList = listToBagCleanup (listToBagA itemList)
 
@@ -16,6 +17,7 @@ module Bags where
   listToBagA [] = []
   listToBagA (first:rest) = ((first,1):listToBagA rest)
 
+  -- goes through list of tuples and puts duplicates togther - i.e. (5,1),(5,1),(3,1)(5,1) becomes (5,3),(3,1)
   listToBagCleanup :: Bag Int -> Bag Int
   listToBagCleanup [] = []
   listToBagCleanup bag = listToBagCleanupA bag []
