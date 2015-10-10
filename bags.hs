@@ -10,8 +10,11 @@ module Bags where
   type Bag a = [Item a]
 
   listToBag :: [ItemType] -> Bag Int
-  listToBag [] = []
-  listToBag (first:rest) = (first,1):listToBag rest
+  listToBag itemList = listToBagCleanup (listToBagA itemList)
+
+  listToBagA :: [ItemType] -> Bag Int
+  listToBagA [] = []
+  listToBagA (first:rest) = ((first,1):listToBagA rest)
 
   listToBagCleanup :: Bag Int -> Bag Int
   listToBagCleanup [] = []
