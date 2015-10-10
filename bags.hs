@@ -29,29 +29,29 @@ module Bags where
   -- the 'working' bag is a new bag, initially empty, used to build up the final bag which will have been stored more efficiently
   listToBagCleanupA bag workingBag
     -- got to end of working bag, so just insert the item into it
-    | null remainingBag = bagInsert nextItemType workingBag
+    | null remainingBag = bagInsert currentItemType workingBag
     -- otherwise insert item in place
-    | otherwise = listToBagCleanupA remainingBag (bagInsert nextItemType workingBag)
-    where ((nextItemType,nextItemCount):remainingBag) = bag
+    | otherwise = listToBagCleanupA remainingBag (bagInsert currentItemType workingBag)
+    where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
   itemCount :: ItemType -> Bag Int -> Int
   itemCount itemType bag
     -- if the current item in list is of the type being queried, return its quantity
-    | null remainingBag = if itemType == nextItemType then nextItemCount else 0
-    | itemType == nextItemType = nextItemCount + (itemCount itemType remainingBag)
+    | null remainingBag = if itemType == currentItemType then currentItemQuantity else 0
+    | itemType == currentItemType = currentItemQuantity + (itemCount itemType remainingBag)
     | otherwise = itemCount itemType remainingBag
-    where ((nextItemType,nextItemCount):remainingBag) = bag
+    where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
   bagInsert :: ItemType -> Bag Int-> Bag Int
   bagInsert itemType [] = (itemType,1):[]
   bagInsert itemType bag
     -- if item doesn't exist, create new pair which counts 1 item of the type
-    | null remainingBag = if itemType == nextItemType then (nextItemType,nextItemCount+1):[] else (nextItemType,nextItemCount):(itemType,1):[]
+    | null remainingBag = if itemType == currentItemType then (currentItemType,currentItemQuantity+1):[] else (currentItemType,currentItemQuantity):(itemType,1):[]
     -- if item is already in list, create tuple with item type and count increased by 1 and cons it
-    | itemType == nextItemType = (nextItemType,nextItemCount+1):(remainingBag)
+    | itemType == currentItemType = (currentItemType,currentItemQuantity+1):(remainingBag)
     -- else keep going through bag seeing if item already exists
-    | otherwise = ((nextItemType,nextItemCount):(bagInsert itemType remainingBag))
-    where ((nextItemType,nextItemCount):remainingBag) = bag
+    | otherwise = ((currentItemType,currentItemQuantity):(bagInsert itemType remainingBag))
+    where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
   -- sort both bags and then see if each (item,quantity) tuple is equal
   bagEqual :: Bag Int -> Bag Int -> Bool
