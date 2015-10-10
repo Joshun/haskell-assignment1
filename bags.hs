@@ -22,8 +22,8 @@ module Bags where
 
   bagInsert :: ItemType -> Bag Int-> Bag Int
   bagInsert itemType bag
-    -- item doesn't exist, create new pair which counts 1 item of the type
-    | null remainingBag = (nextItemType,1):remainingBag
+    -- if item doesn't exist, create new pair which counts 1 item of the type
+    | null remainingBag = if itemType == nextItemType then (nextItemType,nextItemCount+1):[] else (nextItemType,nextItemCount):(itemType,1):[]
     -- if item is already in list, create tuple with item type and count increased by 1 and cons it
     | itemType == nextItemType = (nextItemType,nextItemCount+1):(remainingBag)
     -- else keep going through bag seeing if item already exists
