@@ -23,18 +23,17 @@ module Bags where
   listToBagCleanup bag = listToBagCleanupA bag []
 
   -- takes a bag to clean up, a working bag and returns a new bag
-  listToBagCleanupA :: Bag Int -> Bag Int -> Bag Int
   listToBagCleanupA bag workingBag
-    | null rest = bagInsert nextItemType workingBag
-    | otherwise = listToBagCleanupA rest (bagInsert nextItemType workingBag)
-    where ((nextItemType,nextItemCount):rest) = bag
+    | null remainingBag = bagInsert nextItemType workingBag
+    | otherwise = listToBagCleanupA remainingBag (bagInsert nextItemType workingBag)
+    where ((nextItemType,nextItemCount):remainingBag) = bag
 
   itemCount :: ItemType -> Bag Int -> Int
   itemCount itemType bag
-    | null rest = if itemType == nextItemType then nextItemCount else 0
-    | itemType == nextItemType = nextItemCount + (itemCount itemType rest)
-    | otherwise = itemCount itemType rest
-    where ((nextItemType,nextItemCount):rest) = bag
+    | null remainingBag = if itemType == nextItemType then nextItemCount else 0
+    | itemType == nextItemType = nextItemCount + (itemCount itemType remainingBag)
+    | otherwise = itemCount itemType remainingBag
+    where ((nextItemType,nextItemCount):remainingBag) = bag
 
   bagInsert :: ItemType -> Bag Int-> Bag Int
   bagInsert itemType [] = (itemType,1):[]
