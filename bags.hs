@@ -4,6 +4,8 @@
    ******************** -}
 
 module Bags where
+  import Data.List
+
   type ItemType = Int
   type Item a = (a,Int)
   -- data Item = (a,Int) deriving Eq (Eq,Int)
@@ -45,3 +47,15 @@ module Bags where
     -- else keep going through bag seeing if item already exists
     | otherwise = ((nextItemType,nextItemCount):(bagInsert itemType remainingBag))
     where ((nextItemType,nextItemCount):remainingBag) = bag
+
+  bagEqual :: Bag Int -> Bag Int -> Bool
+  bagEqual [] [] = True
+  bagEqual _ [] = False
+  bagEqual [] _ = False
+  bagEqual bag1 bag2 = bagEqualA (sort bag1) (sort bag2)
+
+  bagEqualA :: Bag Int -> Bag Int -> Bool
+  bagEqualA (h1:t1) (h2:t2)
+    | null t1 && null t2 = h1 == h2
+    | h1 == h2 = bagEqualA t1 t2
+    | otherwise = False
