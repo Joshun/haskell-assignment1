@@ -71,5 +71,7 @@ module Bags where
   bagEqualA [] _ = False
 
   bagEqualA (h1:t1) (h2:t2)
+  -- heads are equal, check rest of bag is
     | h1 == h2 = bagEqualA t1 t2
+  -- return false if any aren't
     | otherwise = False
