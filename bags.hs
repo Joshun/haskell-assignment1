@@ -56,6 +56,20 @@ module Bags where
     | otherwise = ((currentItemType,currentItemQuantity):(bagInsert itemType remainingBag))
     where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
+  bagInsertN :: ItemType -> Int -> Bag Int -> Bag Int
+  bagInsertN itemType n [] = (itemType,n):[]
+  bagInsertN itemType n bag
+    -- if item doesn't exist, create new pair which counts 1 item of the type
+    | null remainingBag =
+        if itemType == currentItemType
+          then (currentItemType,currentItemQuantity+n):[]
+        else (currentItemType,currentItemQuantity):(itemType,n):[]
+    -- if item is already in list, create tuple with item type and count increased by 1 and cons it
+    | itemType == currentItemType = (currentItemType,currentItemQuantity+n):(remainingBag)
+    -- else keep going through bag seeing if item already exists
+    | otherwise = ((currentItemType,currentItemQuantity):(bagInsertN itemType n remainingBag))
+    where ((currentItemType,currentItemQuantity):remainingBag) = bag
+
   -- sort both bags and then see if each (item,quantity) tuple is equal
   bagEqual :: Bag Int -> Bag Int -> Bool
   -- two empty bags equal, but if just one of either is then they cannot be
@@ -88,6 +102,35 @@ module Bags where
         (bag1ItemType,bag2ItemCount):(bagIntersection remainingBag1 bag2)
     -- if item isn't present in bag2 then check rest of items in bag1
     | otherwise = bagIntersection remainingBag1 bag2
+    -- checks if the item being looked at in bag 1 is present in bag 2
+    | bag2ItemCount > 0 =
+    -- checks whether the item occurs more times in bag1 or bag2
+      if (bag1ItemCount) <= bag2ItemCount
+        then (bag1ItemType,bag1ItemCount):(bagIntersection remainingBag1 bag2)
+      else
+        (bag1ItemType,bag2ItemCount):(bagIntersection remainingBag1 bag2)
+    -- if item isn't present in bag2 then check rest of items in bag1
+    | otherwise = bagIntersection remainingBag1 bag2
     where ((bag1ItemType,bag1ItemCount):remainingBag1) = bag1
     -- here, bag2ItemCount is the number of times the current item being looked at in bag 1, bag1ItemType, occurs in bag 2
           bag2ItemCount = itemCount bag1ItemType bag2
+
+  bagSum :: Bag Int -> Bag Int -> Bag Int
+  bagSum bag1 bag2 = bagSumA bag1 bag2 []
+
+  bagSumA :: Bag Int -> Bag Int -> Bag Int -> Bag Int
+  bagSumA bag1 bag2 workingBag
+    | null bag1 && null bag2 = []
+    | null bag1 = bagInsertN bag2CurrentItemType bag2CurrentItemQuantity (bagSumIndividual remainingBag2 workingBag)
+    | null bag2 = bagInsertN bag1CurrentItemType bag1CurrentItemQuantity (bagSumIndividual remainingBag1 workingBag)
+    | null remainingBag1 = bagInsertN bag1CurrentItemType bag1CurrentItemQuantity (bagInsertN bag2CurrentItemType bag2CurrentItemQuantity (bagSumIndividual remainingBag2 workingBag))
+    | null remainingBag2 = bagInsertN bag2CurrentItemType bag2CurrentItemQuantity (bagInsertN bag1CurrentItemType bag1CurrentItemQuantity (bagSumIndividual remainingBag1 workingBag))
+    | otherwise = bagInsertN bag1CurrentItemType bag1CurrentItemQuantity (bagInsertN bag2CurrentItemType bag2CurrentItemQuantity (bagSumA remainingBag1 remainingBag2 workingBag))
+    where ((bag1CurrentItemType,bag1CurrentItemQuantity):remainingBag1) = bag1
+          ((bag2CurrentItemType,bag2CurrentItemQuantity):remainingBag2) = bag2
+
+  bagSumIndividual :: Bag Int -> Bag Int -> Bag Int
+  bagSumIndividual bag workingBag
+    | null bag = []
+    | otherwise = bagInsertN currentItemType currentItemQuantity workingBag
+    where (currentItemType,currentItemQuantity):remainingBag = bag
