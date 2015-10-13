@@ -76,15 +76,18 @@ module Bags where
   -- return false if any aren't
     | otherwise = False
 
-  bagSum :: Bag Int -> Bag Int -> Bag Int
-  bagSum bag1 bag2
+  bagIntersection :: Bag Int -> Bag Int -> Bag Int
+  bagIntersection bag1 bag2
     | null bag1 || null bag2 = []
-    -- | bag1ItemCount <= itemCount bag1ItemType bag2 = (bag1ItemType,bag1ItemCount):(bagSum remainingBag1 bag2)
+    -- checks if the item being looked at in bag 1 is present in bag 2
     | bag2ItemCount > 0 =
+    -- checks whether the item occurs more times in bag1 or bag2
       if (bag1ItemCount) <= bag2ItemCount
         then (bag1ItemType,bag1ItemCount):(bagSum remainingBag1 bag2)
       else
         (bag1ItemType,bag2ItemCount):(bagSum remainingBag1 bag2)
+    -- if item isn't present in bag2 then check rest of items in bag1
     | otherwise = bagSum remainingBag1 bag2
     where ((bag1ItemType,bag1ItemCount):remainingBag1) = bag1
+    -- here, bag2ItemCount is the number of times the current item being looked at in bag 1, bag1ItemType, occurs in bag 2
           bag2ItemCount = itemCount bag1ItemType bag2
