@@ -75,3 +75,15 @@ module Bags where
     | h1 == h2 = bagEqualA t1 t2
   -- return false if any aren't
     | otherwise = False
+
+  bagSum :: Bag Int -> Bag Int -> Bag Int
+  bagSum bag1 bag2
+    | null bag1 || null bag2 = []
+    -- | bag1ItemCount <= itemCount bag1ItemType bag2 = (bag1ItemType,bag1ItemCount):(bagSum remainingBag1 bag2)
+    | (itemCount bag1ItemType bag2) > 0 =
+      if (bag1ItemCount) <= itemCount bag1ItemType bag2
+        then (bag1ItemType,bag1ItemCount):(bagSum remainingBag1 bag2)
+      else
+        (bag1ItemType,(itemCount bag1ItemType bag2)):(bagSum remainingBag1 bag2)
+    | otherwise = bagSum remainingBag1 bag2
+    where ((bag1ItemType,bag1ItemCount):remainingBag1) = bag1
