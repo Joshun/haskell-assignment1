@@ -80,10 +80,11 @@ module Bags where
   bagSum bag1 bag2
     | null bag1 || null bag2 = []
     -- | bag1ItemCount <= itemCount bag1ItemType bag2 = (bag1ItemType,bag1ItemCount):(bagSum remainingBag1 bag2)
-    | (itemCount bag1ItemType bag2) > 0 =
-      if (bag1ItemCount) <= itemCount bag1ItemType bag2
+    | bag2ItemCount > 0 =
+      if (bag1ItemCount) <= bag2ItemCount
         then (bag1ItemType,bag1ItemCount):(bagSum remainingBag1 bag2)
       else
-        (bag1ItemType,(itemCount bag1ItemType bag2)):(bagSum remainingBag1 bag2)
+        (bag1ItemType,bag2ItemCount):(bagSum remainingBag1 bag2)
     | otherwise = bagSum remainingBag1 bag2
     where ((bag1ItemType,bag1ItemCount):remainingBag1) = bag1
+          bag2ItemCount = itemCount bag1ItemType bag2
