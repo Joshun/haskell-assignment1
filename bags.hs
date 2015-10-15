@@ -24,8 +24,9 @@ module Bags where
   itemCount :: (Ord a) => a -> Bag a -> Int
   itemCount itemType bag
     -- if the current item in list is of the type being queried, return its quantity
-    | null remainingBag = if itemType == currentItemType then currentItemQuantity else 0
-    | itemType == currentItemType = currentItemQuantity + (itemCount itemType remainingBag)
+    | itemType == currentItemType = currentItemQuantity
+    -- current item in list is not of type being queried and end of list has been reached so return 0
+    | null remainingBag = 0
     | otherwise = itemCount itemType remainingBag
     where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
