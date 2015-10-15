@@ -6,21 +6,20 @@
 module Bags where
   import Data.List
 
-  type ItemType = Int
   type Item a = (a,Int)
   -- data Item = (a,Int) deriving Eq (Eq,Int)
   type Bag a = [Item a]
 
   -- takes a list of items in sequence and puts them into a list of tuples in sequence
-  listToBag :: [ItemType] -> Bag Int
+  listToBag :: (Ord a) => [a] -> Bag a
   listToBag itemList = listToBagCleanup (listToBagA itemList)
 
-  listToBagA :: [ItemType] -> Bag Int
+  listToBagA :: (Ord a) => [a] -> Bag a
   listToBagA [] = []
   listToBagA (first:rest) = ((first,1):listToBagA rest)
 
   -- goes through list of tuples and puts duplicates togther - i.e. (5,1),(5,1),(3,1)(5,1) becomes (5,3),(3,1)
-  listToBagCleanup :: Bag Int -> Bag Int
+  listToBagCleanup :: (Ord a) => Bag a -> Bag a
   listToBagCleanup [] = []
   -- call listToBagCleanupA with the bag to clean up and an empty 'working' bag
   listToBagCleanup bag = listToBagCleanupA bag []
@@ -34,7 +33,7 @@ module Bags where
     | otherwise = listToBagCleanupA remainingBag (bagInsert currentItemType workingBag)
     where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
-  itemCount :: ItemType -> Bag Int -> Int
+  itemCount :: (Ord a) => a -> Bag a -> Int
   itemCount itemType bag
     -- if the current item in list is of the type being queried, return its quantity
     | null remainingBag = if itemType == currentItemType then currentItemQuantity else 0
@@ -42,7 +41,7 @@ module Bags where
     | otherwise = itemCount itemType remainingBag
     where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
-  bagInsert :: ItemType -> Bag Int-> Bag Int
+  bagInsert :: (Ord a) => a -> Bag a-> Bag a
   bagInsert itemType [] = (itemType,1):[]
   bagInsert itemType bag
     -- if item doesn't exist, create new pair which counts 1 item of the type
@@ -56,7 +55,7 @@ module Bags where
     | otherwise = ((currentItemType,currentItemQuantity):(bagInsert itemType remainingBag))
     where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
-  bagInsertN :: ItemType -> Int -> Bag Int -> Bag Int
+  bagInsertN :: (Ord a) => a -> Int -> Bag a -> Bag a
   bagInsertN itemType n [] = (itemType,n):[]
   bagInsertN itemType n bag
     -- if item doesn't exist, create new pair which counts 1 item of the type
@@ -71,7 +70,7 @@ module Bags where
     where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
   -- sort both bags and then see if each (item,quantity) tuple is equal
-  bagEqual :: Bag Int -> Bag Int -> Bool
+  bagEqual :: (Ord a) => Bag a -> Bag a -> Bool
   -- two empty bags equal, but if just one of either is then they cannot be
   bagEqual [] [] = True
   bagEqual _ [] = False
@@ -79,7 +78,7 @@ module Bags where
   -- call bagEqualA on the sorted bags
   bagEqual bag1 bag2 = bagEqualA (sort bag1) (sort bag2)
 
-  bagEqualA :: Bag Int -> Bag Int -> Bool
+  bagEqualA :: (Ord a) => Bag a -> Bag a -> Bool
   bagEqualA [] [] = True
   bagEqualA _ [] = False
   bagEqualA [] _ = False
@@ -90,7 +89,7 @@ module Bags where
   -- return false if any aren't
     | otherwise = False
 
-  bagIntersection :: Bag Int -> Bag Int -> Bag Int
+  bagIntersection :: (Ord a) => Bag a -> Bag a -> Bag a
   bagIntersection bag1 bag2
     | null bag1 || null bag2 = []
     -- checks if the item being looked at in bag 1 is present in bag 2
@@ -115,10 +114,10 @@ module Bags where
     -- here, bag2ItemCount is the number of times the current item being looked at in bag 1, bag1ItemType, occurs in bag 2
           bag2ItemCount = itemCount bag1ItemType bag2
 
-  bagSum :: Bag Int -> Bag Int -> Bag Int
+  bagSum :: (Ord a) => Bag a -> Bag a -> Bag a
   bagSum bag1 bag2 = bagSumA bag1 bag2 []
 
-  bagSumA :: Bag Int -> Bag Int -> Bag Int -> Bag Int
+  bagSumA :: (Ord a) => Bag a -> Bag a -> Bag a -> Bag a
   bagSumA bag1 bag2 workingBag
     | null bag1 && null bag2 = []
     | null bag1 = bagInsertN bag2CurrentItemType bag2CurrentItemQuantity (bagSumIndividual remainingBag2 workingBag)
@@ -129,7 +128,7 @@ module Bags where
     where ((bag1CurrentItemType,bag1CurrentItemQuantity):remainingBag1) = bag1
           ((bag2CurrentItemType,bag2CurrentItemQuantity):remainingBag2) = bag2
 
-  bagSumIndividual :: Bag Int -> Bag Int -> Bag Int
+  bagSumIndividual :: (Ord a) => Bag a -> Bag a -> Bag a
   bagSumIndividual bag workingBag
     | null bag = []
     | otherwise = bagInsertN currentItemType currentItemQuantity workingBag
