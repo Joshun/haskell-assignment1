@@ -12,26 +12,14 @@ module Bags where
 
   -- takes a list of items in sequence and puts them into a list of tuples in sequence
   listToBag :: (Ord a) => [a] -> Bag a
-  listToBag itemList = listToBagCleanup (listToBagA itemList)
+  listToBag itemList = listToBagA itemList []
 
-  listToBagA :: (Ord a) => [a] -> Bag a
-  listToBagA [] = []
-  listToBagA (first:rest) = ((first,1):listToBagA rest)
-
-  -- goes through list of tuples and puts duplicates togther - i.e. (5,1),(5,1),(3,1)(5,1) becomes (5,3),(3,1)
-  listToBagCleanup :: (Ord a) => Bag a -> Bag a
-  listToBagCleanup [] = []
-  -- call listToBagCleanupA with the bag to clean up and an empty 'working' bag
-  listToBagCleanup bag = listToBagCleanupA bag []
-
-  -- takes a bag to clean up, a working bag and returns a new bag
-  -- the 'working' bag is a new bag, initially empty, used to build up the final bag which will have been stored more efficiently
-  listToBagCleanupA bag workingBag
-    -- got to end of working bag, so just insert the item into it
-    | null remainingBag = bagInsert currentItemType workingBag
-    -- otherwise insert item in place
-    | otherwise = listToBagCleanupA remainingBag (bagInsert currentItemType workingBag)
-    where ((currentItemType,currentItemQuantity):remainingBag) = bag
+  listToBagA :: (Ord a) => [a] -> Bag a -> Bag a
+  listToBagA [] _ = []
+  listToBagA itemList workingBag
+    | null remainingList = bagInsert currentItem workingBag
+    | otherwise = listToBagA remainingList (bagInsert currentItem workingBag)
+    where (currentItem:remainingList) = itemList
 
   itemCount :: (Ord a) => a -> Bag a -> Int
   itemCount itemType bag
