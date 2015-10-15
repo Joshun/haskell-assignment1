@@ -6,8 +6,9 @@
 module Bags where
   import Data.List
 
+  -- polymorphic type for single item in bag
   type Item a = (a,Int)
-  -- data Item = (a,Int) deriving Eq (Eq,Int)
+  -- bag of polymorphic item types
   type Bag a = [Item a]
 
   -- takes a list of items in sequence and puts them into a list of tuples in sequence
