@@ -18,10 +18,13 @@ module Bags where
   listToBagA :: (Ord a) => [a] -> Bag a -> Bag a
   listToBagA [] _ = []
   listToBagA itemList workingBag
+    -- if there is none left in remainingList, insert currentItem and finish
     | null remainingList = bagInsert currentItem workingBag
+    -- otherwise keep adding items from the list to the bag
     | otherwise = listToBagA remainingList (bagInsert currentItem workingBag)
     where (currentItem:remainingList) = itemList
 
+  -- returns the quantity of a given item in a bag
   itemCount :: (Ord a) => a -> Bag a -> Int
   itemCount itemType bag
     -- if the current item in list is of the type being queried, return its quantity
@@ -109,15 +112,22 @@ module Bags where
 
   bagSumA :: (Ord a) => Bag a -> Bag a -> Bag a -> Bag a
   bagSumA bag1 bag2 workingBag
+    -- if both bags are empty then sum is empty list
     | null bag1 && null bag2 = []
+    -- if bag1 is empty then add the rest of bag2
     | null bag1 = bagInsertN bag2CurrentItemType bag2CurrentItemQuantity (bagSumIndividual remainingBag2 workingBag)
+    -- if bag2 is empty then add the rest of bag1
     | null bag2 = bagInsertN bag1CurrentItemType bag1CurrentItemQuantity (bagSumIndividual remainingBag1 workingBag)
+    -- if there is no more of bag1 remaining, add its head and the rest of bag2
     | null remainingBag1 = bagInsertN bag1CurrentItemType bag1CurrentItemQuantity (bagInsertN bag2CurrentItemType bag2CurrentItemQuantity (bagSumIndividual remainingBag2 workingBag))
+    -- if there is no more of bag2 remaining, add its head and the rest of bag1
     | null remainingBag2 = bagInsertN bag2CurrentItemType bag2CurrentItemQuantity (bagInsertN bag1CurrentItemType bag1CurrentItemQuantity (bagSumIndividual remainingBag1 workingBag))
+    -- otherwise, keep the contents of both bag1 and bag2
     | otherwise = bagInsertN bag1CurrentItemType bag1CurrentItemQuantity (bagInsertN bag2CurrentItemType bag2CurrentItemQuantity (bagSumA remainingBag1 remainingBag2 workingBag))
     where ((bag1CurrentItemType,bag1CurrentItemQuantity):remainingBag1) = bag1
           ((bag2CurrentItemType,bag2CurrentItemQuantity):remainingBag2) = bag2
 
+  -- helper function for adding the rest of a bag when the other bag is empty
   bagSumIndividual :: (Ord a) => Bag a -> Bag a -> Bag a
   bagSumIndividual bag workingBag
     | null bag = []
