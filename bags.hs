@@ -12,10 +12,10 @@ module Bags where
   type Bag a = [Item a]
 
   -- takes a list of items in sequence and puts them into a list of tuples in sequence
-  listToBag :: (Ord a) => [a] -> Bag a
+  listToBag :: (Eq a) => [a] -> Bag a
   listToBag itemList = listToBagA itemList []
 
-  listToBagA :: (Ord a) => [a] -> Bag a -> Bag a
+  listToBagA :: (Eq a) => [a] -> Bag a -> Bag a
   listToBagA [] _ = []
   listToBagA itemList workingBag
     -- if there is none left in remainingList, insert currentItem and finish
@@ -25,7 +25,7 @@ module Bags where
     where (currentItem:remainingList) = itemList
 
   -- returns the quantity of a given item in a bag
-  itemCount :: (Ord a) => a -> Bag a -> Int
+  itemCount :: (Eq a) => a -> Bag a -> Int
   itemCount itemType bag
     -- if the current item in list is of the type being queried, return its quantity
     | itemType == currentItemType = currentItemQuantity
@@ -34,7 +34,7 @@ module Bags where
     | otherwise = itemCount itemType remainingBag
     where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
-  bagInsert :: (Ord a) => a -> Bag a-> Bag a
+  bagInsert :: (Eq a) => a -> Bag a-> Bag a
   bagInsert itemType [] = (itemType,1):[]
   bagInsert itemType bag
     -- if item doesn't exist, create new pair which counts 1 item of the type
@@ -48,7 +48,7 @@ module Bags where
     | otherwise = ((currentItemType,currentItemQuantity):(bagInsert itemType remainingBag))
     where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
-  bagInsertN :: (Ord a) => a -> Int -> Bag a -> Bag a
+  bagInsertN :: (Eq a) => a -> Int -> Bag a -> Bag a
   bagInsertN itemType n [] = (itemType,n):[]
   bagInsertN itemType n bag
     -- if item doesn't exist, create new pair which counts 1 item of the type
@@ -82,7 +82,7 @@ module Bags where
   -- return false if any aren't
     | otherwise = False
 
-  bagIntersection :: (Ord a) => Bag a -> Bag a -> Bag a
+  bagIntersection :: (Eq a) => Bag a -> Bag a -> Bag a
   bagIntersection bag1 bag2
     | null bag1 || null bag2 = []
     -- checks if the item being looked at in bag 1 is present in bag 2
@@ -107,10 +107,10 @@ module Bags where
     -- here, bag2ItemCount is the number of times the current item being looked at in bag 1, bag1ItemType, occurs in bag 2
           bag2ItemCount = itemCount bag1ItemType bag2
 
-  bagSum :: (Ord a) => Bag a -> Bag a -> Bag a
+  bagSum :: (Eq a) => Bag a -> Bag a -> Bag a
   bagSum bag1 bag2 = bagSumA bag1 bag2 []
 
-  bagSumA :: (Ord a) => Bag a -> Bag a -> Bag a -> Bag a
+  bagSumA :: (Eq a) => Bag a -> Bag a -> Bag a -> Bag a
   bagSumA bag1 bag2 workingBag
     -- if both bags are empty then sum is empty list
     | null bag1 && null bag2 = []
@@ -128,7 +128,7 @@ module Bags where
           ((bag2CurrentItemType,bag2CurrentItemQuantity):remainingBag2) = bag2
 
   -- helper function for adding the rest of a bag when the other bag is empty
-  bagSumIndividual :: (Ord a) => Bag a -> Bag a -> Bag a
+  bagSumIndividual :: (Eq a) => Bag a -> Bag a -> Bag a
   bagSumIndividual bag workingBag
     | null bag = []
     | otherwise = bagInsertN currentItemType currentItemQuantity workingBag
