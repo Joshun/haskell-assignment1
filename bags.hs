@@ -62,25 +62,46 @@ module Bags where
     | otherwise = ((currentItemType,currentItemQuantity):(bagInsertN itemType n remainingBag))
     where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
+  -- -- sort both bags and then see if each (item,quantity) tuple is equal
+  -- bagEqual :: (Ord a) => Bag a -> Bag a -> Bool
+  -- -- two empty bags equal, but if just one of either is then they cannot be
+  -- bagEqual [] [] = True
+  -- bagEqual _ [] = False
+  -- bagEqual [] _ = False
+  -- -- call bagEqualA on the sorted bags
+  -- bagEqual bag1 bag2 = bagEqualA (sort bag1) (sort bag2)
+  --
+  -- bagEqualA :: (Ord a) => Bag a -> Bag a -> Bool
+  -- bagEqualA [] [] = True
+  -- bagEqualA _ [] = False
+  -- bagEqualA [] _ = False
+  --
+  -- bagEqualA (h1:t1) (h2:t2)
+  -- -- heads are equal, check rest of bag is
+  --   | h1 == h2 = bagEqualA t1 t2
+  -- -- return false if any aren't
+  --   | otherwise = False
+
   -- sort both bags and then see if each (item,quantity) tuple is equal
-  bagEqual :: (Ord a) => Bag a -> Bag a -> Bool
+  bagEqual :: (Eq a) => Bag a -> Bag a -> Bool
   -- two empty bags equal, but if just one of either is then they cannot be
   bagEqual [] [] = True
   bagEqual _ [] = False
   bagEqual [] _ = False
   -- call bagEqualA on the sorted bags
-  bagEqual bag1 bag2 = bagEqualA (sort bag1) (sort bag2)
+  bagEqual bag1 bag2
+    | null remainingBag1 && null remainingBag2 = bag1Element `elem` bag2
+    | bag1Element `elem` bag2 = bagEqual remainingBag1 (bagRemove bag1Element bag2)
+    | otherwise = bagEqual remainingBag1 bag2
+    where (bag1Element:remainingBag1) = bag1
+          (bag2Element:remainingBag2) = bag2
 
-  bagEqualA :: (Ord a) => Bag a -> Bag a -> Bool
-  bagEqualA [] [] = True
-  bagEqualA _ [] = False
-  bagEqualA [] _ = False
-
-  bagEqualA (h1:t1) (h2:t2)
-  -- heads are equal, check rest of bag is
-    | h1 == h2 = bagEqualA t1 t2
-  -- return false if any aren't
-    | otherwise = False
+  bagRemove :: (Eq a) => Item a -> Bag a -> Bag a
+  bagRemove item bag
+    | null bag = []
+    | bagElement == item = remainingBag
+    | otherwise = bagElement:(bagRemove item remainingBag)
+    where (bagElement:remainingBag) = bag
 
   bagIntersection :: (Eq a) => Bag a -> Bag a -> Bag a
   bagIntersection bag1 bag2
