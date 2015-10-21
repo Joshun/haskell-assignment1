@@ -9,7 +9,7 @@ module Bags where
   -- bag of polymorphic item types
   type Bag a = [Item a]
 
-  -- takes a list of items in sequence and puts them into a list of tuples in sequence
+  -- function to take a list of items in sequence and put them into a list of tuples (Bag) in sequence
   listToBag :: (Eq a) => [a] -> Bag a
   listToBag itemList = listToBagA itemList []
 
@@ -22,7 +22,7 @@ module Bags where
     | otherwise = listToBagA remainingList (bagInsert currentItem workingBag)
     where (currentItem:remainingList) = itemList
 
-  -- returns the quantity of a given item in a bag
+  -- helper function to query the quantity of a given item in a bag
   itemCount :: (Eq a) => a -> Bag a -> Int
   itemCount itemType bag
     -- if the current item in list is of the type being queried, return its quantity
@@ -32,6 +32,7 @@ module Bags where
     | otherwise = itemCount itemType remainingBag
     where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
+  -- function to insert item into a bag returning a new bag
   bagInsert :: (Eq a) => a -> Bag a-> Bag a
   bagInsert itemType [] = (itemType,1):[]
   bagInsert itemType bag
@@ -46,6 +47,7 @@ module Bags where
     | otherwise = ((currentItemType,currentItemQuantity):(bagInsert itemType remainingBag))
     where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
+  -- helper function to insert an item into a bag a given number of times
   bagInsertN :: (Eq a) => a -> Int -> Bag a -> Bag a
   bagInsertN itemType n [] = (itemType,n):[]
   bagInsertN itemType n bag
@@ -60,7 +62,7 @@ module Bags where
     | otherwise = ((currentItemType,currentItemQuantity):(bagInsertN itemType n remainingBag))
     where ((currentItemType,currentItemQuantity):remainingBag) = bag
 
-  -- sort both bags and then see if each (item,quantity) tuple is equal
+  -- function to test if two bags are equal (contain same set of items with same quantity of each)
   bagEqual :: (Eq a) => Bag a -> Bag a -> Bool
   -- two empty bags equal, but if just one of either is then they cannot be
   bagEqual [] [] = True
@@ -85,6 +87,7 @@ module Bags where
     | otherwise = bagElement:(bagRemove item remainingBag)
     where (bagElement:remainingBag) = bag
 
+  -- function to get the logical intersection of two bags (bag of elements appearing in both)
   bagIntersection :: (Eq a) => Bag a -> Bag a -> Bag a
   bagIntersection bag1 bag2
     | null bag1 || null bag2 = []
@@ -110,6 +113,7 @@ module Bags where
     -- here, bag2ItemCount is the number of times the current item being looked at in bag 1, bag1ItemType, occurs in bag 2
           bag2ItemCount = itemCount bag1ItemType bag2
 
+  -- function to get the logical disjunction of two bags (bag of elements appearing in either bag)
   bagSum :: (Eq a) => Bag a -> Bag a -> Bag a
   bagSum bag1 bag2 = bagSumA bag1 bag2 []
 
