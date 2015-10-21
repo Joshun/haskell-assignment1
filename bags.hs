@@ -4,8 +4,6 @@
    ******************** -}
 
 module Bags where
-  import Data.List
-
   -- polymorphic type for single item in bag
   type Item a = (a,Int)
   -- bag of polymorphic item types
