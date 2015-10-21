@@ -4,7 +4,7 @@
    ******************** -}
 
 module Bags where
-  -- polymorphic type for single item in bag
+  -- polymorphic type for items in bag (item,quantity)
   type Item a = (a,Int)
   -- bag of polymorphic item types
   type Bag a = [Item a]
