@@ -24,6 +24,7 @@ module Bags where
 
   -- helper function to query the quantity of a given item in a bag
   itemCount :: (Eq a) => a -> Bag a -> Int
+  itemCount _ [] = 0
   itemCount itemType bag
     -- if the current item in list is of the type being queried, return its quantity
     | itemType == currentItemType = currentItemQuantity
