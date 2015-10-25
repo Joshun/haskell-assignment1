@@ -50,6 +50,7 @@ module Bags where
 
   -- helper function to insert an item into a bag a given number of times
   bagInsertN :: (Eq a) => a -> Int -> Bag a -> Bag a
+  bagInsertN itemType 0 bag = bag 
   bagInsertN itemType n [] = (itemType,n):[]
   bagInsertN itemType n bag
     -- if item doesn't exist, create new pair which counts 1 item of the type
