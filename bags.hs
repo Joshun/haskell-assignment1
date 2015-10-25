@@ -75,7 +75,7 @@ module Bags where
     -- otherwise see if current element of bag1 exists in bag2 and if so remove from bag2 and compare rest
     | bag1Element `elem` bag2 = bagEqual remainingBag1 (bagRemove bag1Element bag2)
     -- otherwise check rest of bag1 and bag2
-    | otherwise = bagEqual remainingBag1 bag2
+    | otherwise = False
     where (bag1Element:remainingBag1) = bag1
           (bag2Element:remainingBag2) = bag2
 
